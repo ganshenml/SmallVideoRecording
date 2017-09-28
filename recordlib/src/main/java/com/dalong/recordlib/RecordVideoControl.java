@@ -26,18 +26,18 @@ import java.util.List;
  */
 
 public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder.OnInfoListener,
-        MediaRecorder.OnErrorListener,Runnable {
+        MediaRecorder.OnErrorListener, Runnable {
 
     public final String TAG = RecordVideoControl.class.getSimpleName();
     public static final int FLASH_MODE_OFF = 0;
     public static final int FLASH_MODE_ON = 1;
-    public static int flashType=FLASH_MODE_OFF;
+    public static int flashType = FLASH_MODE_OFF;
     private int previewWidth = 640;//预览宽
     private int previewHeight = 480;//预览高
-    private int maxTime=10000;//最大录制时间
-    private long maxSize=30*1024*1024;//最大录制大小 默认30m
+    private int maxTime = 10000;//最大录制时间
+    private long maxSize = 30 * 1024 * 1024;//最大录制大小 默认30m
     public Activity mActivity;
-    public String  videoPath;//保存的位置
+    public String videoPath;//保存的位置
     public SizeSurfaceView mSizeSurfaceView;
     public RecordVideoInterface mRecordVideoInterface;
     private SurfaceHolder mSurfaceHolder;
@@ -46,7 +46,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
     private Camera mCamera;//camera对象
     private boolean mIsPreviewing;  //是否预览
     private MediaRecorder mediaRecorder;
-    private int defaultVideoFrameRate=10;    //默认的视频帧率
+    private int defaultVideoFrameRate = 10;    //默认的视频帧率
     private int mCountTime;//当前录制时间
 
     public RecordVideoControl(Activity mActivity, String videoPath, SizeSurfaceView mSizeSurfaceView, RecordVideoInterface mRecordVideoInterface) {
@@ -55,7 +55,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
         this.mSizeSurfaceView = mSizeSurfaceView;
         this.mRecordVideoInterface = mRecordVideoInterface;
         this.mSizeSurfaceView.setUserSize(true);
-        mSurfaceHolder=this.mSizeSurfaceView.getHolder();
+        mSurfaceHolder = this.mSizeSurfaceView.getHolder();
         mSurfaceHolder.addCallback(this);
 
         //这里设置当摄像头数量大于1的时候就直接设置后摄像头  否则就是前摄像头
@@ -70,13 +70,16 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 摄像头方向
+     *
      * @return
      */
-    public  int getCameraFacing(){
+    public int getCameraFacing() {
         return mCameraId;
     }
+
     /**
      * 开启摄像头预览
+     *
      * @param holder
      */
     private void startCameraPreview(SurfaceHolder holder) {
@@ -113,6 +116,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 切换摄像头
+     *
      * @param v 点击切换的view 这里处理了点击事件
      */
     public void changeCamera(final View v) {
@@ -178,12 +182,12 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
             return;
         }
         List<String> supportedFocus = parameters.getSupportedFocusModes();
-        boolean isHave= supportedFocus == null ? false :
+        boolean isHave = supportedFocus == null ? false :
                 supportedFocus.indexOf(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) >= 0;
         if (isHave) {
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         }
-        parameters.setFlashMode(flashType==FLASH_MODE_ON ?
+        parameters.setFlashMode(flashType == FLASH_MODE_ON ?
                 Camera.Parameters.FLASH_MODE_TORCH :
                 Camera.Parameters.FLASH_MODE_OFF);
         mCamera.setParameters(parameters);
@@ -284,12 +288,14 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
             }
         }
     }
+
     /**
      * 开始录制
      *
      * @return
      */
     public boolean startRecording() {
+        Log.e(TAG, "startRecording");
         isRecording = true;
         mCountTime = 0;
         releaseRecorder();
@@ -300,6 +306,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
+        Log.e(TAG, "mCamearlId " + mCameraId);
         if (mCameraId == 1) {
             mediaRecorder.setOrientationHint(270);
         } else {
@@ -342,7 +349,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
     /**
      * 自定义的设置mediaeecorder 这里设置视频质量最低  录制出来的视频体积很小 对质量不是要求不高的可以使用
      */
-    public void customMediaRecorder(){
+    public void customMediaRecorder() {
         if (mediaRecorder != null) {
             mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
@@ -391,9 +398,10 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 设置闪光灯模式
+     *
      * @param flashType
      */
-    public  void setFlashMode(int flashType) {
+    public void setFlashMode(int flashType) {
         this.flashType = flashType;
         String flashMode = null;
         switch (flashType) {
@@ -415,7 +423,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
     /**
      * 拍照
      */
-    public void  takePhoto(){
+    public void takePhoto() {
         mCamera.setPreviewCallback(new Camera.PreviewCallback() {
             @Override
             public void onPreviewFrame(byte[] data, Camera camera) {
@@ -481,6 +489,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 回调录制时间
+     *
      * @param recordTime
      */
     private void updateCallBack(final int recordTime) {
@@ -498,6 +507,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 获取最大录制时间
+     *
      * @return
      */
     public int getMaxTime() {
@@ -506,6 +516,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 设置录制时间
+     *
      * @param maxTime
      */
     public void setMaxTime(int maxTime) {
@@ -514,6 +525,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 获取最大录制大小
+     *
      * @return
      */
     public long getMaxSize() {
@@ -522,6 +534,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 设置录制大小
+     *
      * @param maxSize
      */
     public void setMaxSize(long maxSize) {
@@ -530,6 +543,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 获取录制视频保存路径
+     *
      * @return
      */
     public String getVideoPath() {
@@ -538,6 +552,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 设置录制保存路径
+     *
      * @param videoPath
      */
     public void setVideoPath(String videoPath) {
@@ -546,6 +561,7 @@ public class RecordVideoControl implements SurfaceHolder.Callback, MediaRecorder
 
     /**
      * 是否录制
+     *
      * @return
      */
     public boolean isRecording() {

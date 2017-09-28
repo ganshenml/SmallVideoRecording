@@ -8,6 +8,6 @@
     <string name="camera_save">保存</string>
     <string name="camera_user">使用</string>
 
-    <string name="camera_photo_path">dalong/photo/</string>
+    <string name="camera_photo_path">videodemo/photo/</string>
 
 </resources>

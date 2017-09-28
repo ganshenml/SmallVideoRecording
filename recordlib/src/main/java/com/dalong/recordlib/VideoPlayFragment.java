@@ -20,22 +20,27 @@ import android.widget.VideoView;
  */
 public class VideoPlayFragment extends Fragment implements View.OnClickListener {
     public static final String TAG = VideoPlayFragment.class.getSimpleName();
-    public static final int FILE_TYPE_VIDEO=0;
+    public static final int FILE_TYPE_VIDEO = 0;
     public static final int FILE_TYPE_PHOTO = 1;
     private VideoView videoView;
 
     private String filePath;
     private int fileType;
     private int direction;
-    private ImageView photoPlay,videoUse,videoCancel;
+    private ImageView photoPlay, videoUse, videoCancel;
+
+    public VideoPlayFragment() {
+
+    }
 
     @SuppressLint("ValidFragment")
-    public VideoPlayFragment(String filePath,int type) {
+    public VideoPlayFragment(String filePath, int type) {
         this.filePath = filePath;
         this.fileType = type;
     }
+
     @SuppressLint("ValidFragment")
-    public VideoPlayFragment(String filePath,int type,int direction) {
+    public VideoPlayFragment(String filePath, int type, int direction) {
         this.filePath = filePath;
         this.fileType = type;
         this.direction = direction;
@@ -44,19 +49,19 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_video_play, container, false);
+        View view = inflater.inflate(R.layout.fragment_video_play, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        videoView = (VideoView)view.findViewById(R.id.video_play);
-        photoPlay = (ImageView)view.findViewById(R.id.photo_play);
-        videoCancel = (ImageView)view.findViewById(R.id.video_cancel);
-        videoUse = (ImageView)view.findViewById(R.id.video_use);
+        videoView = (VideoView) view.findViewById(R.id.video_play);
+        photoPlay = (ImageView) view.findViewById(R.id.photo_play);
+        videoCancel = (ImageView) view.findViewById(R.id.video_cancel);
+        videoUse = (ImageView) view.findViewById(R.id.video_use);
         videoCancel.setOnClickListener(this);
         videoUse.setOnClickListener(this);
-        if(fileType==FILE_TYPE_VIDEO){
+        if (fileType == FILE_TYPE_VIDEO) {
             videoView.setVisibility(View.VISIBLE);
             photoPlay.setVisibility(View.GONE);
             videoView.setVideoURI(Uri.parse(filePath));
@@ -76,12 +81,12 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener 
                     videoView.start();
                 }
             });
-        }else if(fileType==FILE_TYPE_PHOTO){
+        } else if (fileType == FILE_TYPE_PHOTO) {
             videoView.setVisibility(View.GONE);
             photoPlay.setVisibility(View.VISIBLE);
-            Bitmap bitmap= BitmapFactory.decodeFile(filePath);
+            Bitmap bitmap = BitmapFactory.decodeFile(filePath);
             Matrix m = new Matrix();
-            m.setRotate(direction == Camera.CameraInfo.CAMERA_FACING_FRONT?270:90, (float) bitmap.getWidth() / 2, (float) bitmap.getHeight() / 2);
+            m.setRotate(direction == Camera.CameraInfo.CAMERA_FACING_FRONT ? 270 : 90, (float) bitmap.getWidth() / 2, (float) bitmap.getHeight() / 2);
             try {
                 Bitmap bm1 = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
                 photoPlay.setImageBitmap(bm1);
@@ -106,18 +111,18 @@ public class VideoPlayFragment extends Fragment implements View.OnClickListener 
     /**
      * 取消
      */
-    public void onCancel(){
-        ((RecordVideoActivity)getActivity()).popBackStack();
+    public void onCancel() {
+        ((RecordVideoActivity) getActivity()).popBackStack();
     }
 
     /**
      * 使用
      */
-    public void useVideo(){
+    public void useVideo() {
         RecordVideoActivity activity = (RecordVideoActivity) getActivity();
         //防止点击过快
         if (activity != null && !activity.isFinishing()) {
-            if(fileType==FILE_TYPE_VIDEO)
+            if (fileType == FILE_TYPE_VIDEO)
                 activity.returnVideoPath(filePath);
             else
                 activity.returnPhotoPath(filePath);
